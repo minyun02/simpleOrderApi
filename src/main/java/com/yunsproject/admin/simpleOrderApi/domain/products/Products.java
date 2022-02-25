@@ -1,8 +1,7 @@
 package com.yunsproject.admin.simpleOrderApi.domain.products;
 
-import com.yunsproject.admin.simpleOrderApi.domain.BaseTimeEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yunsproject.admin.simpleOrderApi.domain.orders.Orders;
-import com.yunsproject.admin.simpleOrderApi.web.products.dto.ProductResponseDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +10,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -40,7 +38,8 @@ public class Products {
     @LastModifiedDate
     private LocalDateTime modifiedDate;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "products")
+    @JsonIgnore
     private List<Orders> orders;
 
     @Builder
