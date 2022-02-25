@@ -1,19 +1,18 @@
 package com.yunsproject.admin.simpleOrderApi.domain.orders;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yunsproject.admin.simpleOrderApi.domain.products.Products;
-import com.yunsproject.admin.simpleOrderApi.web.orders.dto.OrderRequestDto;
-import com.yunsproject.admin.simpleOrderApi.web.products.dto.ProductResponseDto;
+import com.yunsproject.admin.simpleOrderApi.domain.reviews.Reviews;
+import com.yunsproject.admin.simpleOrderApi.domain.users.Users;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ManyToAny;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
@@ -24,6 +23,7 @@ public class Orders {
     private Long id;
 
     @ManyToMany
+    @JsonIgnore
     @JoinTable(name = "ORDERS_PRODUCTS",
             joinColumns = @JoinColumn(name = "ORDER_ID"),
             inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID")
@@ -32,6 +32,9 @@ public class Orders {
 
     @Column(nullable = false)
     private String totalPrice;
+
+    @ManyToOne
+    private Users user;
 
     private String customerRequest;
 
@@ -51,12 +54,16 @@ public class Orders {
 
     private LocalDateTime deliveryEndedDate;
 
+    @OneToOne
+    private Reviews review;
+
     @Builder
-    public Orders(List<Products> products, String totalPrice, String customerRequest,
-                  String status, LocalDateTime orderedDate, LocalDateTime acceptedDate,
-                  LocalDateTime canceledDate, LocalDateTime doneCookingDate, LocalDateTime deliveryStartedDate, LocalDateTime deliveryEndedDate) {
+    public Orders(List<Products> products, String totalPrice, Users user, String customerRequest,
+                  String status, LocalDateTime orderedDate, LocalDateTime acceptedDate, LocalDateTime canceledDate,
+                  LocalDateTime doneCookingDate, LocalDateTime deliveryStartedDate, LocalDateTime deliveryEndedDate, Reviews review) {
         this.products = products;
         this.totalPrice = totalPrice;
+        this.user = user;
         this.customerRequest = customerRequest;
         this.status = status;
         this.orderedDate = orderedDate;
@@ -65,6 +72,6 @@ public class Orders {
         this.doneCookingDate = doneCookingDate;
         this.deliveryStartedDate = deliveryStartedDate;
         this.deliveryEndedDate = deliveryEndedDate;
+        this.review = review;
     }
-
 }
