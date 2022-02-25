@@ -24,12 +24,8 @@ public class OrdersService {
 
     @Transactional
     public Long orderSave(OrderRequestDto requestDto){
-//        List<Products> productsList = new ArrayList<>();
+
         for(int i=0; i<requestDto.getProducts().size(); i++){
-//            Products product = productRepository.findById(requestDto.getProducts().get(i).getId())
-//                    .orElseThrow(() -> new IllegalArgumentException("해당 메뉴를 찾을 수 없습니다."));
-//            productsList.add(product);
-//
             productRepository.updateStock(requestDto.getProducts().get(i).getId(), requestDto.getProducts().get(i).getStock());
         }
 
@@ -38,7 +34,13 @@ public class OrdersService {
 
     public OrderResponseDto findById(Long id){
         Orders entity = ordersRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."+id));
-        return new OrderResponseDto(entity);
+
+        List<ProductResponseDto> productsList = new ArrayList<>();
+        for(int i=0; i<entity.getProducts().size() ;i++){
+            ProductResponseDto product = new ProductResponseDto(entity.getProducts().get(i));
+            productsList.add(product);
+        }
+        return new OrderResponseDto(entity, productsList);
     }
 
 }
